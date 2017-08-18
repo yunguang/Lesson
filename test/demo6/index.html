@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>海上生明月</title>
+    <style>
+        html,body{
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    var WINDOW_WIDTH;
+    var WINDOW_HEIGHT;
+    window.onload = function(){
+        WINDOW_WIDTH = document.documentElement.clientWidth;
+        WINDOW_HEIGHT = document.documentElement.clientHeight;
+        var cvs = document.getElementById("canvas");
+        cvs.width = WINDOW_WIDTH;
+        cvs.height = WINDOW_HEIGHT;
+        var ctx = cvs.getContext("2d");
+        var offset = 0;
+        var delta = 10;
+        var deg = 0;
+        var r = 1/5*WINDOW_WIDTH;
+        setInterval(function(){
+            offset += delta;
+            if(Math.abs(offset)>150) {
+                delta = -delta;
+                offset += delta;
+            }
+            ctx.clearRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+            //画个月亮消灭你
+            if(Math.abs(deg)<90)deg--;
+            var x = 1/2*WINDOW_WIDTH + Math.cos(deg/180*Math.PI)*r;
+            var y = 1/4*WINDOW_HEIGHT + Math.sin(deg/180*Math.PI)*r;
+            drawMoon(ctx, x, y, 45/360*Math.PI, 1, 180);
+            //浪里个浪
+            drawWave(ctx, offset);
+        }, 50);
+    };
+    /**
+     * 绘制海浪
+     * @param  {context} ctx     绘图上下文
+     * @param  {Number} offsetY 波峰偏移值
+     * @return {[type]}         [description]
+     */
+    function drawWave(ctx, offsetY){
+        ctx.beginPath();
+        var x = 0;
+        var y = WINDOW_HEIGHT/2;
+        var offsetX = 50;
+        ctx.moveTo(x, y);
+        for (var i = 0; i < 10; i++) {
+            var delta = i * 4.5;
+            ctx.bezierCurveTo(x+(1.5+delta)*offsetX, y+offsetY, x+(3+delta)*offsetX, y-offsetY, x+(4.5+delta)*offsetX, y);
+        }
+        ctx.lineTo(WINDOW_WIDTH, WINDOW_HEIGHT);
+        ctx.lineTo(0, WINDOW_HEIGHT);
+        ctx.closePath();
+        ctx.fillStyle = "darkblue";
+        ctx.fill();
+        ctx.stroke();
+    }
+    /**
+     * 绘制新月
+     * @param  {context} ctx 绘图上下文
+     * @param  {Number} xc  切线交点横坐标
+     * @return {[type]}     [description]
+     */
+    function createMoon(ctx, xc){
+        //上圆弧切点
+        var xa = 100;
+        var ya = 100;
+        //下圆弧切点
+        var xb = 100;
+        var yb = 200;
+        //半圆半径
+        var r = 50;
+        //切线交点
+        var yc = 150;
+        ctx.beginPath();
+        ctx.fillStyle="yellow";
+        ctx.strokeStyle="yellow";
+        //绘制半圆,一定要注意绘制路径
+        ctx.arc((xa+xb)/2, (ya+yb)/2, r, 1/2*Math.PI, 3/2*Math.PI, true);
+        var radius = r/(xc-xa)*Math.sqrt(Math.pow(r,2)+Math.pow(xc-xa,2));
+        ctx.moveTo(xa, ya);
+        ctx.arcTo(xc, yc, xb, yb, radius);
+        ctx.fill();
+        ctx.stroke();
+    }
+    /**
+     * 绘制月亮
+     * @param  {context} ctx    上下文绘图环境
+     * @param  {Number} x      平移横坐标
+     * @param  {Number} y      平移纵坐标
+     * @param  {Number} rotate 旋转弧度
+     * @param  {Number} scale  缩放倍率
+     * @param  {Number} xc     切线交点横坐标
+     * @return {[type]}        [description]
+     */
+    function drawMoon(ctx, x, y, rotate, scale, xc){
+        ctx.save();
+        ctx.translate(x||0, y||0);
+        ctx.rotate(rotate||0);
+        ctx.scale(scale||1, scale||1);
+        createMoon(ctx, xc);
+        ctx.restore();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        canvas{
+            position: absolute;
+            top:200px;
+
+        }
+    </style>
+</head>
+<body>
+<canvas id="myCanvas" width="1000"></canvas>
+</body>
+<script>
+    var c=document.getElementById("myCanvas");
+    var ctx=c.getContext("2d");
+    ctx.beginPath();
+    ctx.moveTo(0,50);
+    ctx.bezierCurveTo(50,-50,100,100,150,100);
+    ctx.bezierCurveTo(180,100,200,-50,300,100);
+    ctx.stroke();
+</script>
+</html>
